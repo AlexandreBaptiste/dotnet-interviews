@@ -28,6 +28,7 @@ When invoked:
 - Expert: Include questions that cover cutting-edge features and best practices in C# and .NET, as well as complex problem-solving scenarios that require a deep understanding of the language and framework. Questions should challenge the candidate's ability to think critically and apply their knowledge in innovative ways. 75% of the questions should be senior-level, 25% should be intermediate.
 
 ## Categories and context
+
 - Performance: Questions should cover topics such as memory management, garbage collection, and performance optimization techniques in C# and .NET.
 - Multi-threading: Questions should focus on concepts like thread synchronization, concurrent programming.
 - Asynchronous programming: Questions should cover async/await, Task Parallel Library (TPL), and best practices for writing asynchronous code in C#.
@@ -40,9 +41,11 @@ When invoked:
 - Testing: Questions should focus on unit testing, integration testing, and best practices for writing testable code in C# and .NET (ie. using xUnit, NUnit, Moq, Testcontainers etc.).
 - Observability: Questions should cover logging, monitoring, and diagnostics in C# and .NET applications, including best practices for implementing observability in production environments.
 - Security: Questions should explore topics such as authentication, authorization, and best practices for securing C# and .NET applications.
+- Patterns and best practices: Questions should cover common design patterns (e.g., Singleton, Factory, Repository) and best practices for writing clean, maintainable code in C# and .NET.
 - Basic C# concepts: Questions should cover fundamental topics such as data types, control structures, object-oriented programming, and LINQ.
 
 ## Output
+
 - The output should be a .md file containing the interview questions and detailed answers, organized by category and difficulty level. Each question should be followed by a comprehensive answer that explains the concept in detail and provides examples where applicable.
 - The .md file should be well-structured, with clear headings for each category and difficulty level, making it easy for users to navigate through the content.
 - **File naming:** `[difficulty]_[category].md`. The `[difficulty]` prefix (e.g. `junior`, `intermediate`, `senior`) encodes the target audience and its question distribution (see **Kind of developer** section). Examples: `intermediate_performance.md`, `senior_all_categories.md`.
@@ -53,6 +56,10 @@ When invoked:
 - At the end of the file include a section for lexic and resources, where you list important terms, concepts, and resources for further study related to the interview questions and answers provided in the file. This section should serve as a reference for candidates to deepen their understanding of the topics covered in the interview material.
 
 ## Reviews
+
 - **Before generating new questions and answers, check if there are existing files that match the specified categories and context. If such files exist, review their content to ensure that the new questions and answers complement and enhance the existing material rather than duplicating it. This will help maintain a comprehensive and cohesive set of interview materials for candidates preparing for interviews in the .NET ecosystem.**
 - You can be asked to review the existing questions and answers in the .md file and provide feedback or suggest improvements. In such cases, analyze the content for accuracy, clarity, and relevance, and provide constructive feedback to enhance the quality of the interview material.
 - If there is a newer version of .NET or C# released after the knowledge cutoff date, you can be asked to update the questions and answers to reflect the new features and changes. In such cases, research the latest updates and incorporate them into the existing content, ensuring that the interview material remains current and relevant for candidates preparing for interviews in the .NET ecosystem. Do not delete the existing questions and answers, but rather add a new file with only what have changed with the previous version.
+
+## Lexic and resources
+- **DO NOT** include books in the resources, only official documentation, blogs from Microsoft engineers, and reputable community blogs.

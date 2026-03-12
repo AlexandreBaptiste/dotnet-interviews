@@ -22,6 +22,7 @@ Chaque fichier contient des questions avec réponses détaillées et exemples de
 | [senior_testing.md](senior_testing.md) | WebApplicationFactory, Testcontainers, TimeProvider (.NET 8), NSubstitute, Respawn |
 | [senior_background_services.md](senior_background_services.md) | BackgroundService, PeriodicTimer, Channel&lt;T&gt;, graceful shutdown, health checks |
 | [senior_security.md](senior_security.md) | JWT Bearer, Policy-based auth, Data Protection API, Claims Transformation |
+| [senior_patterns.md](senior_patterns.md) | SOLID, Repository/UoW, Strategy, Decorator, CQRS/MediatR, Clean Architecture, Outbox, DDD Value Objects |
 | [senior_scenarios.md](senior_scenarios.md) | Scénarios réels : diagnostic API lente, fuite mémoire, race condition, optimisation endpoint |
 
 ---
