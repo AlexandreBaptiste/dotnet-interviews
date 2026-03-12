@@ -148,9 +148,9 @@ lock(LockA)            lock(LockB)
 // Ou utiliser Monitor.TryEnter avec timeout
 bool acquired = Monitor.TryEnter(LockA, TimeSpan.FromSeconds(1));
 
-// Deadlock async classique (ASP.NET Classic / UI)
+// Deadlock avec SynchronizationContext (WPF/WinForms sur .NET 5+)
 public string GetData() =>
-    GetDataAsync().Result; // bloque le thread UI/context
+    GetDataAsync().Result; // bloque le SynchronizationContext courant
 
 public async Task<string> GetDataAsync()
 {
@@ -278,7 +278,6 @@ await Parallel.ForEachAsync(urls,
 | Adapté pour | CPU-bound | I/O-bound et CPU-bound async |
 | CancellationToken | Via `ParallelOptions` | Via `ParallelOptions` et par item |
 | Thread bloqué | Oui (normal pour CPU-bound) | Non (vrai async) |
-| Disponible depuis | .NET Framework | .NET 6+ |
 
 > **Règle :** `Parallel.ForEach` → CPU-bound pur. `Parallel.ForEachAsync` → I/O-bound ou mixed. L'ancien pattern `SemaphoreSlim` + `Task.WhenAll` n'est plus nécessaire dans la plupart des cas.
 

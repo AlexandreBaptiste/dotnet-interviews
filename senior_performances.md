@@ -43,15 +43,7 @@ int x = 42;
 object boxed = x;    // boxing : allocation d'un objet sur la heap
 int y = (int)boxed;  // unboxing
 
-// Piège classique : ArrayList (pré-génériques)
-var list = new ArrayList();
-list.Add(42); // boxing à chaque Add !
-
-// Solution : List<int> — aucun boxing
-var typed = new List<int>();
-typed.Add(42); // pas de boxing
-
-// Autre piège : interface sur struct
+// Piège : interface sur struct
 interface IFoo { void Bar(); }
 struct MyStruct : IFoo { public void Bar() { } }
 
@@ -331,61 +323,7 @@ void FastMethod()
 
 ---
 
-## Strings & Collections
-
-### 🟢 Qu'est-ce que `StringBuilder` et dans quel cas l'utiliser plutôt que la concaténation de `string` ?
-
-Les `string` sont **immuables** en C#. Chaque `+` crée une nouvelle instance.
-
-```csharp
-// Mauvais : O(n²) en temps et mémoire
-string result = "";
-for (int i = 0; i < 10000; i++)
-    result += i.ToString(); // nouvelle string à chaque itération !
-
-// Bon : O(n)
-var sb = new StringBuilder(capacity: 10000 * 4);
-for (int i = 0; i < 10000; i++)
-    sb.Append(i);
-string result = sb.ToString();
-```
-
-> **Exception :** pour 2-3 concaténations simples hors boucle, `string.Concat()` ou interpolation est optimisé par le compilateur — `StringBuilder` est superflu.
->
-> **C# 10+ :** `string.Create()` et les interpolated string handlers (`DefaultInterpolatedStringHandler`) permettent des interpolations sans allocation intermédiaire.
-
----
-
-### 🟡 Quand utiliseriez-vous `HashSet<T>` plutôt que `List<T>` ?
-
-| Opération | `List<T>` | `HashSet<T>` |
-|---|---|---|
-| Contient (Contains) | O(n) | O(1) |
-| Ajout | O(1) amorti | O(1) amorti |
-| Suppression | O(n) | O(1) |
-| Ordre | Préservé | Non garanti |
-| Doublons | Autorisés | Interdits |
-
-**Utiliser `HashSet<T>` quand :**
-- Vérification fréquente de présence (`Contains`)
-- Dédoublonnage d'une collection
-- Opérations ensemblistes : `UnionWith`, `IntersectWith`, `ExceptWith`
-
-```csharp
-// Mauvais : O(n²) pour 10 000 éléments
-var list = new List<int>(data);
-foreach (var x in otherData)
-    if (list.Contains(x)) // O(n) à chaque appel !
-        Process(x);
-
-// Bon : O(n)
-var set = new HashSet<int>(data);
-foreach (var x in otherData)
-    if (set.Contains(x)) // O(1)
-        Process(x);
-```
-
----
+## LINQ & EF Core
 
 ### 🟡 Quelle est la différence entre `IQueryable<T>` et `IEnumerable<T>` dans un contexte EF Core ?
 

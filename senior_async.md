@@ -254,7 +254,6 @@ Un `SynchronizationContext` capture l'environnement d'exécution pour que les co
 | Contexte | SynchronizationContext | Comportement |
 |---|---|---|
 | WPF / WinForms | `DispatcherSynchronizationContext` | Reprend sur le UI thread |
-| ASP.NET Classic | `AspNetSynchronizationContext` | Reprend dans le contexte HTTP |
 | ASP.NET Core | `null` | Reprend sur un thread du ThreadPool |
 
 ```csharp
