@@ -640,3 +640,65 @@ extern static ref int GetPrivateField(MyClass instance);
 
 var value = GetPrivateField(obj); // accès direct, zéro overhead
 ```
+
+---
+
+## Lexique
+
+| Terme | Définition |
+|---|---|
+| **Allocation** | Réservation d'un bloc de mémoire (stack ou heap) pour stocker un objet ou une valeur. |
+| **AOT (Ahead-Of-Time)** | Compilation du code IL en code natif avant le déploiement, éliminant le besoin du JIT au runtime. |
+| **Backpressure** | Mécanisme de contrôle de flux où un consommateur lent signale au producteur de ralentir. |
+| **Boxing / Unboxing** | Conversion d'un value type vers `object` (boxing) et inversement (unboxing), impliquant une allocation heap. |
+| **CAS (Compare-And-Swap)** | Instruction CPU atomique comparant une valeur en mémoire et la remplaçant si elle correspond à l'attendu. |
+| **Cold start** | Temps de démarrage initial d'une application incluant le chargement et la compilation JIT. |
+| **Devirtualisation** | Optimisation JIT remplaçant un appel virtuel (via vtable) par un appel direct quand le type concret est connu. |
+| **Dynamic PGO** | Profile-Guided Optimization dynamique : le JIT recompile les méthodes chaudes en se basant sur les données d'exécution réelles. |
+| **ETW (Event Tracing for Windows)** | Infrastructure de tracing bas niveau du noyau Windows utilisée par PerfView et dotnet-trace. |
+| **GC Pressure** | Charge imposée au Garbage Collector par des allocations fréquentes, causant des pauses plus longues. |
+| **Gen 0 / Gen 1 / Gen 2** | Générations du GC : Gen 0 (jeunes objets), Gen 1 (tampon), Gen 2 (objets long-lived, collecte coûteuse). |
+| **Hot path** | Chemin d'exécution fréquemment emprunté, où les micro-optimisations ont un impact mesurable. |
+| **IL (Intermediate Language)** | Code intermédiaire produit par le compilateur C#, exécuté par le CLR via JIT ou interprété. |
+| **Inlining** | Remplacement d'un appel de méthode par le corps de la méthode directement sur le site d'appel. |
+| **IOCP (I/O Completion Ports)** | Mécanisme Windows pour gérer efficacement des milliers d'opérations I/O asynchrones. |
+| **JIT (Just-In-Time)** | Compilation du code IL en code natif au moment de l'exécution. |
+| **LOH (Large Object Heap)** | Zone du heap pour les objets ≥ 85 000 bytes, collectée avec Gen 2, non compactée par défaut. |
+| **NativeAOT** | Compilation AOT produisant un binaire natif autonome sans dépendance au runtime .NET. |
+| **POH (Pinned Object Heap)** | Heap dédié aux objets épinglés (.NET 5+), évitant la fragmentation des autres heaps. |
+| **R2R (ReadyToRun)** | Format de pré-compilation partielle : code natif embarqué dans l'assembly, le JIT peut encore optimiser. |
+| **ref struct** | Value type contraint à la stack, ne pouvant pas être boxé ni utilisé dans des contextes async. |
+| **SIMD** | Single Instruction, Multiple Data : instructions CPU traitant plusieurs données en parallèle (vectorisation). |
+| **Source Generator** | Composant Roslyn générant du code C# à la compilation, remplaçant la Reflection runtime. |
+| **Span\<T\>** | Vue mémoire stack-only, sans allocation, sur une séquence contiguë de données. |
+| **Tiered Compilation** | Compilation JIT en deux phases : Tier-0 rapide, puis Tier-1 optimisé pour les méthodes chaudes. |
+| **Trimming** | Suppression du code IL inutilisé lors de la publication, réduisant la taille du binaire. |
+| **vtable** | Table de méthodes virtuelles utilisée à l'exécution pour résoudre les appels polymorphes. |
+
+---
+
+## Ressources
+
+### Documentation officielle Microsoft
+- [Performance best practices — .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/performance-best-practices)
+- [Garbage collection — .NET](https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/)
+- [Memory management and patterns — .NET](https://learn.microsoft.com/en-us/dotnet/standard/memory-and-spans/)
+- [NativeAOT deployment](https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/)
+- [Source Generators](https://learn.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/source-generators-overview)
+- [What's new in .NET 8 / 9](https://learn.microsoft.com/en-us/dotnet/core/whats-new/)
+- [What's new in C# 12 / 13](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/)
+
+### Livres
+- *Pro .NET Memory Management* — Konrad Kokosa
+- *Writing High-Performance .NET Code* — Ben Watson
+- *CLR via C#* — Jeffrey Richter
+
+### Outils
+- [BenchmarkDotNet](https://benchmarkdotnet.org/)
+- [PerfView](https://github.com/microsoft/perfview)
+- [dotnet-counters / dotnet-trace / dotnet-dump](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/)
+
+### Blogs & Articles
+- [Stephen Toub — Performance improvements in .NET (series)](https://devblogs.microsoft.com/dotnet/author/stephen-toubmicrosoft-com/)
+- [Adam Sitnik — Span, Memory, Pipelines](https://adamsitnik.com/)
+- [Maoni Stephens — .NET GC internals](https://maoni0.medium.com/)

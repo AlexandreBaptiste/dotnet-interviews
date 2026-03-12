@@ -479,3 +479,54 @@ var results = await Task.WhenAll(tasks);
 var successes = results.Where(r => r.Error is null);
 var failures = results.Where(r => r.Error is not null);
 ```
+
+---
+
+## Lexique
+
+| Terme | Définition |
+|---|---|
+| **AggregateException** | Exception conteneur regroupant plusieurs exceptions, typiquement levée par `Task.WhenAll`. |
+| **async void** | Méthode async sans Task de retour : les exceptions ne sont pas observables. Réservé aux event handlers UI. |
+| **Awaitable** | Tout objet exposant `GetAwaiter()` avec `IsCompleted`, `GetResult()` et `OnCompleted()`. |
+| **Awaiter** | Objet retourné par `GetAwaiter()` qui gère la suspension et la reprise d'une opération async. |
+| **Backpressure** | Mécanisme où le consommateur signale au producteur de ralentir quand il ne peut pas suivre le rythme. |
+| **Bounded Channel** | Channel avec une capacité maximale : le producteur attend/drop si la file est pleine. |
+| **CancellationToken** | Jeton coopératif permettant de demander l'annulation d'une opération async. |
+| **CancellationTokenSource** | Objet créant et contrôlant un `CancellationToken`, avec support du timeout. |
+| **Channel\<T\>** | File async producteur/consommateur thread-safe avec backpressure native (`System.Threading.Channels`). |
+| **ConfigureAwait** | Configure si la continuation async reprend sur le `SynchronizationContext` capturé ou non. |
+| **Continuation** | Code exécuté après la completion d'un `await`, planifié par l'infrastructure async. |
+| **Fire-and-forget** | Pattern où une Task est lancée sans être awaitée — risque de perte d'exceptions silencieuse. |
+| **IAsyncEnumerable\<T\>** | Interface permettant de consommer un flux async item par item avec `await foreach`. |
+| **IOCP** | I/O Completion Ports : mécanisme Windows pour gérer des I/O async sans bloquer de threads. |
+| **OperationCanceledException** | Exception levée quand un `CancellationToken` est activé, signalant une annulation coopérative. |
+| **PeriodicTimer** | Timer async non-réentrant (.NET 6+) conçu pour les tâches périodiques dans les `BackgroundService`. |
+| **Polly** | Bibliothèque de résilience pour .NET : retry, circuit-breaker, timeout, hedging. |
+| **State machine** | Structure générée par le compilateur pour chaque méthode `async`, gérant les points de suspension. |
+| **SynchronizationContext** | Abstraction capturant l'environnement d'exécution (UI thread, HTTP context) pour les continuations. |
+| **Sync-over-async** | Anti-pattern consistant à bloquer un thread sur une Task (`.Result`, `.Wait()`). |
+| **TaskCompletionSource** | Permet de créer manuellement une `Task` et de contrôler quand elle se complète. |
+| **Thundering herd** | Problème où de nombreux clients retentent simultanément une opération, surchargeant le serveur. |
+| **ValueTask\<T\>** | Struct awaitable évitant l'allocation heap quand le résultat est déjà disponible. |
+
+---
+
+## Ressources
+
+### Documentation officielle Microsoft
+- [Asynchronous programming with async and await](https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/)
+- [Task-based asynchronous pattern (TAP)](https://learn.microsoft.com/en-us/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap)
+- [Channels — System.Threading.Channels](https://learn.microsoft.com/en-us/dotnet/core/extensions/channels)
+- [IAsyncEnumerable\<T\>](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerable-1)
+- [Microsoft.Extensions.Http.Resilience](https://learn.microsoft.com/en-us/dotnet/core/resilience/http-resilience)
+
+### Livres
+- *Concurrency in C# Cookbook* (2nd ed.) — Stephen Cleary
+- *Async in C# 5.0* — Alex Davies
+
+### Blogs & Articles
+- [Stephen Cleary — async best practices](https://blog.stephencleary.com/)
+- [David Fowler — ASP.NET Core diagnostic scenarios](https://github.com/davidfowl/AspNetCoreDiagnosticScenarios)
+- [Stephen Toub — How async/await really works](https://devblogs.microsoft.com/dotnet/how-async-await-really-works/)
+- [Stephen Toub — ConfigureAwait FAQ](https://devblogs.microsoft.com/dotnet/configureawait-faq/)

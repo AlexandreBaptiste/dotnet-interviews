@@ -39,6 +39,7 @@ When invoked:
 - Ensure that the questions and answers are up-to-date with the latest features and best practices in C# and .NET, reflecting the current state of the ecosystem as of the knowledge cutoff date.
 - Files should be saved in a designated directory for interview materials, and the user should be informed of the file location upon completion.
 - Files should have a section with what .NET and C# versions the questions are based on, to ensure relevance and accuracy.
+- At the end of the file include a section for lexic and resources, where you list important terms, concepts, and resources for further study related to the interview questions and answers provided in the file. This section should serve as a reference for candidates to deepen their understanding of the topics covered in the interview material.
 
 ## Reviews
 - You can be asked to review the existing questions and answers in the .md file and provide feedback or suggest improvements. In such cases, analyze the content for accuracy, clarity, and relevance, and provide constructive feedback to enhance the quality of the interview material.

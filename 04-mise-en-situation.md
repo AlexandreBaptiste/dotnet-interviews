@@ -485,3 +485,48 @@ public sealed class StatusResponse // sealed → devirtualisation JIT
 - **`sealed`** : devirtualisation JIT possible
 - **`string.Concat`** : évite l'allocation de `FormattableString` de l'interpolation
 - **`DateTime` au lieu de `string`** : le serializer JSON formate sans allocation intermédiaire
+
+---
+
+## Lexique
+
+| Terme | Définition |
+|---|---|
+| **AsNoTracking** | Option EF Core désactivant le change tracking, réduisant la mémoire et les allocations. |
+| **Backpressure** | Mécanisme de contrôle de flux où le consommateur signale au producteur de ralentir. |
+| **Change tracking** | Système EF Core surveillant les modifications des entités chargées pour générer des UPDATE SQL. |
+| **Channel\<T\>** | File async producteur/consommateur avec backpressure native. |
+| **dotnet-counters** | Outil CLI pour observer les métriques runtime .NET en temps réel (CPU, GC, threads). |
+| **dotnet-dump** | Outil CLI pour capturer et analyser des dumps mémoire de processus .NET. |
+| **ExecuteUpdateAsync** | Méthode EF Core 7+ exécutant un UPDATE SQL sans charger les entités en mémoire. |
+| **GC root** | Référence (variable locale, champ statique, handle) empêchant le GC de collecter un objet. |
+| **HybridCache** | API de cache unifiée (.NET 9+) combinant cache L1 in-memory et L2 distribué. |
+| **IAsyncEnumerable\<T\>** | Interface pour consommer un flux de données async, item par item, sans tout charger en RAM. |
+| **IMemoryCache** | Interface de cache in-memory avec expiration et éviction automatique. |
+| **N+1 queries** | Anti-pattern ORM : 1 requête pour les entités parentes + N requêtes pour les enfants. |
+| **Projection** | Sélection d'un sous-ensemble de colonnes dans la requête SQL (via `.Select()`), évitant le chargement complet. |
+| **Socket exhaustion** | Épuisement des ports réseau causé par la création répétée de `HttpClient`. |
+| **ThreadPool starvation** | Saturation du pool de threads par des opérations bloquantes, empêchant les nouvelles requêtes d'être traitées. |
+| **TIME_WAIT** | État TCP où un socket reste ouvert ~4 min après fermeture, contribuant au socket exhaustion. |
+
+---
+
+## Ressources
+
+### Documentation officielle Microsoft
+- [ASP.NET Core performance best practices](https://learn.microsoft.com/en-us/aspnet/core/performance/performance-best-practices)
+- [.NET diagnostics tools](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/)
+- [IHttpClientFactory guidelines](https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory)
+- [EF Core performance tips](https://learn.microsoft.com/en-us/ef/core/performance/)
+- [HybridCache (.NET 9)](https://learn.microsoft.com/en-us/aspnet/core/performance/caching/hybrid)
+
+### Outils de diagnostic
+- [dotnet-counters](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-counters) — métriques runtime
+- [dotnet-dump](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-dump) — analyse de dumps
+- [dotnet-trace](https://learn.microsoft.com/en-us/dotnet/core/diagnostics/dotnet-trace) — traces cross-platform
+- [PerfView](https://github.com/microsoft/perfview) — GC analysis, CPU sampling
+
+### Blogs & Articles
+- [David Fowler — ASP.NET Core diagnostic scenarios](https://github.com/davidfowl/AspNetCoreDiagnosticScenarios)
+- [Steve Gordon — HttpClient best practices](https://www.stevejgordon.co.uk/)
+- [Andrew Lock — ASP.NET Core in Action](https://andrewlock.net/)

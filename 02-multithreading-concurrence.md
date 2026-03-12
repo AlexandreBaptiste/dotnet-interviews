@@ -397,3 +397,52 @@ if (queue.TryDequeue(out var item))
 ```
 
 > **Règle :** ne pas utiliser `lock` + `Dictionary` quand `ConcurrentDictionary` suffit. Mais `ConcurrentDictionary` n'est pas toujours le bon choix — pour un cache read-heavy, `FrozenDictionary` ou `ImmutableDictionary` peut être plus adapté.
+
+---
+
+## Lexique
+
+| Terme | Définition |
+|---|---|
+| **Atomicité** | Propriété garantissant qu'une opération s'exécute entièrement ou pas du tout, sans état intermédiaire visible. |
+| **Barrier** | Primitive de synchronisation où N threads attendent que tous aient atteint un point donné avant de continuer. |
+| **CAS (Compare-And-Swap)** | Instruction CPU atomique : compare une valeur puis la remplace seulement si elle correspond à la valeur attendue. |
+| **Context switch** | Opération OS de sauvegarde/restauration de l'état d'un thread pour passer à un autre. Coûteux (~1-10 µs). |
+| **Contention** | Situation où plusieurs threads tentent d'accéder à une même ressource protégée, causant de l'attente. |
+| **Critical section** | Bloc de code ne pouvant être exécuté que par un seul thread à la fois, protégé par un verrou. |
+| **Deadlock** | Situation où deux (ou plus) threads s'attendent mutuellement indéfiniment, chacun détenant un verrou requis par l'autre. |
+| **Fine-grained locking** | Stratégie de verrouillage utilisant plusieurs locks de portée réduite plutôt qu'un seul lock global. |
+| **Hill climbing** | Algorithme d'ajustement du ThreadPool .NET qui augmente/réduit le nombre de threads pour maximiser le débit. |
+| **Interlocked** | Classe fournissant des opérations atomiques (increment, exchange, CAS) via des instructions CPU natives. |
+| **Kernel mode** | Mode d'exécution CPU avec privilèges élevés, nécessaire pour certaines opérations de synchronisation. |
+| **Lazy initialization** | Création différée d'un objet au premier accès plutôt qu'à la construction. |
+| **Lock-free** | Algorithme garantissant un progrès global sans verrou : au moins un thread progresse toujours. |
+| **Monitor** | Mécanisme de synchronisation .NET sous-jacent au mot-clé `lock`, avec Enter/Exit/Wait/Pulse. |
+| **Mutex** | Primitive de synchronisation cross-process basée sur un handle OS nommé. |
+| **Race condition** | Bug causé par le timing d'accès concurrent à des données partagées, avec un résultat dépendant de l'ordonnancement. |
+| **Semaphore** | Primitive de synchronisation limitant le nombre d'accès simultanés à une ressource (N max). |
+| **Starvation** | Situation où un thread/requête n'obtient jamais l'accès à une ressource à cause de la priorité d'autres threads. |
+| **Thread safety** | Propriété d'un code pouvant être appelé simultanément par plusieurs threads sans comportement indéfini. |
+| **ThreadPool** | Pool de threads worker réutilisables géré par le runtime, évitant le coût de création/destruction. |
+| **volatile** | Mot-clé C# empêchant le réordonnancement des lectures/écritures et forçant l'accès mémoire principal. |
+
+---
+
+## Ressources
+
+### Documentation officielle Microsoft
+- [Threading in .NET](https://learn.microsoft.com/en-us/dotnet/standard/threading/)
+- [Managed threading best practices](https://learn.microsoft.com/en-us/dotnet/standard/threading/managed-threading-best-practices)
+- [Thread-safe collections](https://learn.microsoft.com/en-us/dotnet/standard/collections/thread-safe/)
+- [System.Threading.Lock (.NET 9)](https://learn.microsoft.com/en-us/dotnet/api/system.threading.lock)
+- [Parallel programming in .NET](https://learn.microsoft.com/en-us/dotnet/standard/parallel-programming/)
+
+### Livres
+- *Concurrency in C# Cookbook* — Stephen Cleary
+- *CLR via C#* (chapitres threading) — Jeffrey Richter
+- *Pro .NET Memory Management* — Konrad Kokosa
+
+### Blogs & Articles
+- [Stephen Toub — .NET threading internals](https://devblogs.microsoft.com/dotnet/author/stephen-toubmicrosoft-com/)
+- [Threading in C# (free e-book) — Joseph Albahari](https://www.albahari.com/threading/)
+- [.NET ThreadPool starvation — David Fowler](https://github.com/davidfowl/AspNetCoreDiagnosticScenarios)
