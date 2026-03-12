@@ -3,8 +3,6 @@
 > **Versions ciblées :** .NET 8 / .NET 9 / .NET 10, C# 12 / C# 13 / C# 14
 >
 > **Niveaux de difficulté :** 🟢 Basique · 🟡 Intermédiaire · 🔴 Senior/Expert
->
-> **Distribution senior :** ~25 % basique, ~25 % intermédiaire, ~50 % senior/expert
 
 ---
 

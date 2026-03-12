@@ -12,10 +12,10 @@ Chaque fichier contient des questions avec réponses détaillées et exemples de
 
 | Fichier | Sujet |
 |---|---|
-| [01-performances.md](01-performances.md) | Mémoire, allocations, GC, JIT/AOT, Span, profiling, I/O |
-| [02-multithreading-concurrence.md](02-multithreading-concurrence.md) | ThreadPool, synchronisation, deadlocks, collections thread-safe |
-| [03-programmation-asynchrone.md](03-programmation-asynchrone.md) | async/await, ValueTask, Channel, IAsyncEnumerable, anti-patterns |
-| [04-mise-en-situation.md](04-mise-en-situation.md) | Scénarios réels : diagnostic API lente, fuite mémoire, race condition, optimisation endpoint |
+| [senior_performances.md](senior_performances.md) | Mémoire, allocations, GC, JIT/AOT, Span, profiling, I/O |
+| [senior_multithreading.md](senior_multithreading.md) | ThreadPool, synchronisation, deadlocks, collections thread-safe |
+| [senior_async.md](senior_async.md) | async/await, ValueTask, Channel, IAsyncEnumerable, anti-patterns |
+| [senior_scenarios.md](senior_scenarios.md) | Scénarios réels : diagnostic API lente, fuite mémoire, race condition, optimisation endpoint |
 
 ---
 
