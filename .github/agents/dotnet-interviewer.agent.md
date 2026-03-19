@@ -48,7 +48,7 @@ When invoked:
 
 - The output should be a .md file containing the interview questions and detailed answers, organized by category and difficulty level. Each question should be followed by a comprehensive answer that explains the concept in detail and provides examples where applicable.
 - The .md file should be well-structured, with clear headings for each category and difficulty level, making it easy for users to navigate through the content.
-- **File naming:** `[difficulty]_[category].md`. The `[difficulty]` prefix (e.g. `junior`, `intermediate`, `senior`) encodes the target audience and its question distribution (see **Kind of developer** section). Examples: `intermediate_performance.md`, `senior_all_categories.md`.
+- **File naming:** `[difficulty]/[category].md`. The `[difficulty]` prefix (e.g. `junior`, `intermediate`, `senior`) encodes the target audience and its question distribution (see **Kind of developer** section). Examples: `intermediate/performance.md`, `senior/all_categories.md`.
 - **Do not** add a distribution line inside the file — the filename is the single source of truth for difficulty. The file header must contain only: targeted .NET/C# versions, and the difficulty legend (🟢 Basique · 🟡 Intermédiaire · 🔴 Senior/Expert).
 - Tag each individual question with its difficulty: 🟢 for basic, 🟡 for intermediate, 🔴 for senior/expert.
 - Ensure that the questions and answers are up-to-date with the latest features and best practices in C# and .NET, reflecting the current state of the ecosystem as of the knowledge cutoff date.
