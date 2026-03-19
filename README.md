@@ -24,6 +24,9 @@ Chaque fichier contient des questions avec réponses détaillées et exemples de
 | [senior/security.md](senior/security.md) | JWT Bearer, Policy-based auth, Data Protection API, Claims Transformation |
 | [senior/patterns.md](senior/patterns.md) | SOLID, Repository/UoW, Strategy, Decorator, CQRS/MediatR, Clean Architecture, Outbox, DDD Value Objects |
 | [senior/scenarios.md](senior/scenarios.md) | Scénarios réels : diagnostic API lente, fuite mémoire, race condition, optimisation endpoint |
+| [senior/caching.md](senior/caching.md) | IMemoryCache, IDistributedCache, Redis, Output Cache, HybridCache (.NET 9), cache stampede, invalidation |
+| [senior/csharp_language_features.md](senior/csharp_language_features.md) | Records, pattern matching, NRT, primary constructors, generic math, C# 12/13/14, interceptors |
+| [senior/api_design.md](senior/api_design.md) | Minimal APIs, versioning, ProblemDetails, OpenAPI/Scalar (.NET 9), Rate Limiting, gRPC, YARP, BFF, Idempotency |
 
 ---
 
