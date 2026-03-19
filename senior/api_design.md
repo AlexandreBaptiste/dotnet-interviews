@@ -495,9 +495,10 @@ public class IdempotencyMiddleware(IDistributedCache cache, RequestDelegate next
         var cached = await cache.GetStringAsync(cacheKey);
         if (cached is not null)
         {
-            ctx.Response.StatusCode  = StatusCodes.Status200OK;
+            var cachedResponse = JsonSerializer.Deserialize<CachedResponse>(cached)!;
+            ctx.Response.StatusCode  = cachedResponse.StatusCode;
             ctx.Response.ContentType = "application/json";
-            await ctx.Response.WriteAsync(cached);
+            await ctx.Response.WriteAsync(cachedResponse.Body);
             return;
         }
 
@@ -514,7 +515,9 @@ public class IdempotencyMiddleware(IDistributedCache cache, RequestDelegate next
         // Mettre en cache uniquement les succès (2xx)
         if (ctx.Response.StatusCode is >= 200 and < 300)
         {
-            await cache.SetStringAsync(cacheKey, responseBody,
+            var cachedResponse = JsonSerializer.Serialize(
+                new CachedResponse(ctx.Response.StatusCode, responseBody));
+            await cache.SetStringAsync(cacheKey, cachedResponse,
                 new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24)
@@ -526,6 +529,9 @@ public class IdempotencyMiddleware(IDistributedCache cache, RequestDelegate next
         ctx.Response.Body = originalBody;
     }
 }
+
+// Record pour stocker statut + corps
+public record CachedResponse(int StatusCode, string Body);
 ```
 
 **Règles d'or :**

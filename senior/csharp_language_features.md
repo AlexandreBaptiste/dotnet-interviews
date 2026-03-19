@@ -121,8 +121,9 @@ public bool TryFind(int id, [NotNullWhen(true)] out Order? order)
     return order is not null;
 }
 
-// [MaybeNull] : retourner null même si le type est non-nullable (ex : default(T))
-public T GetOrDefault<T>([MaybeNull] T defaultValue = default) => defaultValue;
+// [return: MaybeNull] : retourner null même si le type est non-nullable (ex : default(T))
+[return: MaybeNull]
+public T GetOrDefault<T>(T defaultValue = default!) => defaultValue;
 
 // [NotNull] : garantir qu'une valeur nullable ne sera pas null après l'appel
 public static void ThrowIfNull([NotNull] object? value, string paramName)
@@ -434,7 +435,6 @@ public string Name
 public IReadOnlyList<string> Tags
 {
     get => field ??= LoadTags();
-    private init;
 }
 ```
 
@@ -481,7 +481,7 @@ Action<int, int> handler = (_, _) => Console.WriteLine("fired");
 void OnEvent(object _, EventArgs _) => Console.WriteLine("event received");
 ```
 
-**4. Partial properties (C# 13+, généralisé en C# 14)**
+**4. Partial properties (C# 13)**
 ```csharp
 // Source generators peuvent désormais générer des partial properties
 public partial class Order

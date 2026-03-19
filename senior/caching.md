@@ -168,7 +168,7 @@ public class RedisCatalogCache(IConnectionMultiplexer redis)
 
 ---
 
-### 🟡 Qu'est-ce que l'Output Cache (.NET 8+) ? En quoi diffère-t-il du Response Cache ?
+### 🟡 Qu'est-ce que l'Output Cache (.NET 7+) ? En quoi diffère-t-il du Response Cache ?
 
 | | Response Caching | Output Caching |
 |---|---|---|
