@@ -8,6 +8,167 @@
 
 ## Fondamentaux
 
+### 🟢 Quels sont les grands types de tests (Solitary, Sociable, E2E) ? À quoi servent-ils et quand les utiliser ?
+
+La taxonomie la plus répandue dans l'écosystème .NET moderne distingue trois grandes familles de tests, popularisées par Martin Fowler et le mouvement « Growing Object-Oriented Software » :
+
+#### 1. Tests Solitaires (*Solitary Unit Tests*)
+
+L'unité testée est **complètement isolée** de tous ses collaborateurs. Chaque dépendance externe (repository, service, horloge…) est remplacée par un double de test (mock/stub/fake).
+
+- **Pourquoi ?** Vitesse maximale (millisecondes), feedback immédiat, déterminisme total. Ils localisent précisément l'origine d'un bug.
+- **Quand ?** Sur la logique métier pure (calculs, règles de domaine, algorithmes) où l'on veut vérifier le comportement d'une seule classe indépendamment du reste.
+- **Limites :** N'exercent pas les contrats entre composants. Un test solitaire vert ne garantit pas que l'intégration fonctionne.
+
+```csharp
+// Solitaire : OrderService totalement isolé — le repository est mocké
+public class OrderServiceSolitaryTests
+{
+    private readonly IOrderRepository _repo = Substitute.For<IOrderRepository>();
+    private readonly OrderService _sut;
+
+    public OrderServiceSolitaryTests()
+        => _sut = new OrderService(_repo, NullLogger<OrderService>.Instance);
+
+    [Fact]
+    public async Task PlaceOrder_ValidRequest_CallsSaveOnce()
+    {
+        var request = new PlaceOrderRequest("Alice", 99.99m);
+
+        await _sut.PlaceOrderAsync(request);
+
+        await _repo.Received(1).SaveAsync(Arg.Any<Order>(), Arg.Any<CancellationToken>());
+    }
+}
+```
+
+---
+
+#### 2. Tests Sociables (*Sociable Unit Tests*)
+
+L'unité testée collabore avec de **vraies implémentations** de certains voisins (entités de domaine, value objects, services purement fonctionnels), tout en remplaçant les dépendances avec effets de bord (I/O, réseau, temps…) par des fakes.
+
+- **Pourquoi ?** Meilleure fidélité aux comportements réels sans le coût des tests d'intégration. Ils exercent les interactions internes du domaine.
+- **Quand ?** Pour tester un agrégat ou un service applicatif aux côtés de ses vraies entités de domaine (ex. `Order` + `OrderLine`), en mockant uniquement les ports d'infrastructure.
+- **Limites :** Plus difficiles à maintenir si de nombreuses classes changent en même temps ; peuvent cacher des problèmes d'isolation.
+
+```csharp
+// Sociable : OrderService utilise de vrai objets Order/OrderLine,
+// mais le repository reste un fake
+public class OrderServiceSociableTests
+{
+    private readonly FakeOrderRepository _repo = new();
+    private readonly OrderService _sut;
+
+    public OrderServiceSociableTests()
+        => _sut = new OrderService(_repo, NullLogger<OrderService>.Instance);
+
+    [Fact]
+    public async Task PlaceOrder_MultipleLines_ComputesTotalCorrectly()
+    {
+        var request = new PlaceOrderRequest("Alice",
+            Lines: [new("Widget", 2, 10m), new("Gadget", 1, 50m)]);
+
+        var order = await _sut.PlaceOrderAsync(request);
+
+        // On vérifie le comportement réel du domaine Order + OrderLine
+        Assert.Equal(70m, order.Total);
+    }
+}
+
+// Fake repository en mémoire (implémentation réelle légère, pas un mock)
+public class FakeOrderRepository : IOrderRepository
+{
+    private readonly List<Order> _store = [];
+
+    public Task SaveAsync(Order order, CancellationToken ct = default)
+    {
+        _store.Add(order);
+        return Task.CompletedTask;
+    }
+
+    public Task<Order?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        => Task.FromResult(_store.FirstOrDefault(o => o.Id == id));
+}
+```
+
+---
+
+#### 3. Tests End-to-End (E2E)
+
+Ils exercent **l'ensemble de la pile applicative** — de l'interface utilisateur ou du point d'entrée HTTP jusqu'à la base de données réelle et les services externes — en simulant un vrai utilisateur ou client.
+
+- **Pourquoi ?** Seule catégorie qui garantit que tous les composants s'assemblent correctement en production. Ils détectent des régressions invisibles pour les tests unitaires.
+- **Quand ?** Sur les scénarios critiques métier (parcours d'achat, authentification, génération de rapport…). Limiter leur nombre : ils sont lents et fragiles.
+- **En .NET :** `WebApplicationFactory` + Testcontainers pour les tests E2E d'API ; Playwright ou Selenium pour les tests E2E d'interface Web.
+
+```csharp
+// E2E API : WebApplicationFactory + vraie base PostgreSQL via Testcontainers
+public class PlaceOrderE2ETests(E2EApiFactory factory) : IClassFixture<E2EApiFactory>
+{
+    private readonly HttpClient _client = factory.CreateClient();
+
+    [Fact]
+    public async Task PlaceOrder_FullStack_Returns201AndPersistsOrder()
+    {
+        // Act : requête HTTP réelle vers l'app démarrée en mémoire
+        var response = await _client.PostAsJsonAsync("/api/orders",
+            new { CustomerName = "Alice", Amount = 99.99m });
+
+        // Assert : statut HTTP
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        // Assert : persistance réelle en base
+        var dto = await response.Content.ReadFromJsonAsync<OrderDto>();
+        var check = await _client.GetAsync($"/api/orders/{dto!.Id}");
+        check.EnsureSuccessStatusCode();
+    }
+}
+
+public class E2EApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
+{
+    private readonly PostgreSqlContainer _db = new PostgreSqlBuilder()
+        .WithImage("postgres:16").Build();
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureServices(services =>
+        {
+            var descriptor = services.Single(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+            services.Remove(descriptor);
+            services.AddDbContext<AppDbContext>(o => o.UseNpgsql(_db.GetConnectionString()));
+        });
+    }
+
+    public async Task InitializeAsync() => await _db.StartAsync();
+    public new async Task DisposeAsync() => await _db.StopAsync();
+}
+```
+
+---
+
+#### Synthèse et pyramide de tests recommandée
+
+```
+        /\
+       /E2E\          ← peu nombreux, lents, fragiles, haute confiance
+      /______\
+     /Sociable \      ← couverture des flux métier, bonne fidélité
+    /____________\
+   /  Solitaire   \   ← très nombreux, ultra-rapides, très ciblés
+  /________________\
+```
+
+| Type | Isolement | Vitesse | Nombre idéal | Frameworks .NET |
+|---|---|---|---|---|
+| Solitaire | Total (tout mocké) | ~1 ms | Beaucoup | xUnit + Moq / NSubstitute |
+| Sociable | Partiel (vrais objets domaine) | ~5–50 ms | Moyen | xUnit + Fakes maison |
+| E2E | Aucun (stack complète) | ~500 ms – plusieurs s | Peu | xUnit + WebApplicationFactory + Testcontainers + Playwright |
+
+> **Règle pratique :** Écrire beaucoup de tests solitaires pour le domaine, des tests sociables pour les flux applicatifs, et quelques tests E2E pour les parcours critiques. Si un comportement ne peut être couvert qu'en E2E, c'est souvent le symptôme d'un manque d'abstraction dans le code de production.
+
+---
+
 ### 🟢 Quelle est la différence entre tests unitaires et tests d'intégration en .NET Core ?
 
 | | Test unitaire | Test d'intégration |
@@ -379,6 +540,12 @@ public class DatabaseFixture : IAsyncLifetime
 | Terme | Définition |
 |---|---|
 | **AAA (Arrange / Act / Assert)** | Structure d'un test : préparation, exécution, vérification. |
+| **Double de test (Test Double)** | Terme générique pour tout objet remplaçant une dépendance réelle dans un test (mock, stub, fake, spy, dummy). |
+| **E2E (End-to-End)** | Test exercant la totalité de la pile applicative (HTTP → logique → base de données réelle) pour valider un scénario complet. |
+| **Fake** | Implémentation légère mais fonctionnelle d'une dépendance (ex. repository en mémoire), sans framework de mock. |
+| **Pyramide de tests** | Modèle recommandant beaucoup de tests unitaires à la base, des tests d'intégration au milieu, et peu de tests E2E au sommet. |
+| **Sociable (Sociable Unit Test)** | Test unitaire laissant les vrais objets du domaine collaborer, mais remplaçant les dépendances avec effets de bord (I/O). |
+| **Solitaire (Solitary Unit Test)** | Test unitaire isolant complètement l'unité testée de tous ses collaborateurs via des doubles de test. |
 | **FakeTimeProvider** | Implémentation de `TimeProvider` pour les tests, permettant de contrôler et avancer le temps. |
 | **Fixture** | Contexte partagé entre plusieurs tests (connexion DB, serveur HTTP), instancié une seule fois. |
 | **IClassFixture\<T\>** | Interface xUnit partageant une instance entre tous les tests d'une classe. |
@@ -409,6 +576,8 @@ public class DatabaseFixture : IAsyncLifetime
 - [Respawn](https://github.com/jbogard/Respawn)
 
 ### Blogs & Articles
+- [Martin Fowler — Unit Test (Solitary vs Sociable)](https://martinfowler.com/bliki/UnitTest.html)
+- [Martin Fowler — Test Pyramid](https://martinfowler.com/bliki/TestPyramid.html)
 - [Jimmy Bogard — Integration testing ASP.NET Core](https://jimmybogard.com/)
 - [Andrew Lock — Testing Minimal APIs](https://andrewlock.net/)
 - [Nick Chapsas — .NET testing best practices (YouTube)](https://www.youtube.com/@nickchapsas)
